@@ -36,10 +36,22 @@ class fs_access extends fs_model
    public $fs_page;
    
    /**
+    * Otorga permisos al usuario a modificar elementos en la página.
+    * @var type 
+    */
+   public $allow_modify;
+
+   /**
     * Otorga permisos al usuario a eliminar elementos en la página.
     * @var type 
     */
    public $allow_delete;
+
+   /**
+    * El usuario solo ve sus datos en la página.
+    * @var type 
+    */
+   public $allow_only_user;
    
    public function __construct($a=FALSE)
    {
@@ -48,13 +60,17 @@ class fs_access extends fs_model
       {
          $this->fs_user = $a['fs_user'];
          $this->fs_page = $a['fs_page'];
+         $this->allow_modify = $this->str2bool($a['allow_modify']);
          $this->allow_delete = $this->str2bool($a['allow_delete']);
+         $this->allow_only_user = $this->str2bool($a['allow_only_user']);
       }
       else
       {
          $this->fs_user = NULL;
          $this->fs_page = NULL;
+         $this->allow_modify = FALSE;
          $this->allow_delete = FALSE;
+         $this->allow_only_user = TRUE;
       }
    }
    
@@ -78,13 +94,19 @@ class fs_access extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET allow_delete = ".$this->var2str($this->allow_delete)."
-            WHERE fs_user = ".$this->var2str($this->fs_user)." AND fs_page = ".$this->var2str($this->fs_page).";";
+         $sql = "UPDATE ".$this->table_name." SET allow_modify = ".$this->var2str($this->allow_modify)
+                 .", allow_delete = ".$this->var2str($this->allow_delete)
+                 .", allow_only_user = ".$this->var2str($this->allow_only_user)
+                 ." WHERE fs_user = ".$this->var2str($this->fs_user)." AND fs_page = ".$this->var2str($this->fs_page).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (fs_user,fs_page,allow_delete) VALUES
-            (".$this->var2str($this->fs_user).",".$this->var2str($this->fs_page).",".$this->var2str($this->allow_delete).");";
+         $sql = "INSERT INTO ".$this->table_name." (fs_user,fs_page,allow_modify,allow_delete, allow_only_user) VALUES ("
+                 .$this->var2str($this->fs_user)
+                 .",".$this->var2str($this->fs_page)
+                 .",".$this->var2str($this->allow_modify)
+                 .",".$this->var2str($this->allow_delete)
+                 .",".$this->var2str($this->allow_only_user).");";
       }
       
       return $this->db->exec($sql);

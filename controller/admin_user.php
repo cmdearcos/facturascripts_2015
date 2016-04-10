@@ -32,6 +32,7 @@ class admin_user extends fs_controller
    
    public function private_core()
    {
+       //var_dump($_POST);die;
       $this->share_extensions();
       
       /// ¿El usuario tiene permiso para eliminar en esta página?
@@ -149,7 +150,9 @@ class admin_user extends fs_controller
       foreach($this->menu as $m)
       {
          $m->enabled = FALSE;
+         $m->allow_modify = FALSE;
          $m->allow_delete = FALSE;
+         $m->allow_only_user = FALSE;
          $returnlist[] = $m;
       }
       
@@ -162,7 +165,9 @@ class admin_user extends fs_controller
             if($value->name == $a->fs_page)
             {
                $returnlist[$i]->enabled = TRUE;
+               $returnlist[$i]->allow_modify = $a->allow_modify;
                $returnlist[$i]->allow_delete = $a->allow_delete;
+               $returnlist[$i]->allow_only_user = $a->allow_only_user;
                break;
             }
          }
@@ -371,10 +376,21 @@ class admin_user extends fs_controller
                    * si ya estaba en la base de datos. Eso lo hace el modelo.
                    */
                   $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$p->name, 'allow_delete'=>FALSE) );
+                  if( isset($_POST['allow_modify']) )
+                  {
+                     $a->allow_modify = in_array($p->name, $_POST['allow_modify']);
+                  }
+
                   if( isset($_POST['allow_delete']) )
                   {
                      $a->allow_delete = in_array($p->name, $_POST['allow_delete']);
                   }
+
+                  if( isset($_POST['allow_only_user']) )
+                  {
+                     $a->allow_only_user = in_array($p->name, $_POST['allow_only_user']);
+                  }
+                  
                   
                   if($user_no_more_admin)
                   {

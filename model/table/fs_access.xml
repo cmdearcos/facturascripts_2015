@@ -29,6 +29,12 @@
         <nulo>NO</nulo>
         <defecto>1</defecto>
     </columna>
+    <columna>
+        <nombre>allow_only_user</nombre>
+        <tipo>tinyint(1)</tipo>
+        <nulo>NO</nulo>
+        <defecto>1</defecto>
+    </columna>
     <restriccion>
         <nombre>fs_access_pkey</nombre>
         <consulta>PRIMARY KEY (fs_user,fs_page)</consulta>
